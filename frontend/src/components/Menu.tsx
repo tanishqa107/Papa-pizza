@@ -23,7 +23,7 @@ useEffect(() => {
 
     if (name && number) {
       try {
-        await axios.post('http://localhost:3000/login', { name, number });
+        await axios.post('https://papa-pizza-1afi.onrender.com/login', { name, number });
         console.log('User info sent to backend!');
         localStorage.setItem('user_sent', 'true'); // mark as sent
       } catch (err) {

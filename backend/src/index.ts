@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' })); // change to your frontend origin
+app.use(cors({ origin: 'https://papa-pizza-dun.vercel.app' })); // change to your frontend origin
 app.use(express.json());
 
 const supabaseUrl = process.env.SUPABASE_URL as string;
