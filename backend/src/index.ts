@@ -10,7 +10,7 @@ import nodemailer from 'nodemailer';
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: ['https://papa-pizza-dun.vercel.app', 'http://localhost:5174'] })); // allow local dev
+app.use(cors({ origin: ['https://papa-pizza-dun.vercel.app', 'https://www.thepapapizza.com', 'http://localhost:5174'] }));
 app.use(express.json());
 
 const supabaseUrl = process.env.SUPABASE_URL as string;
