@@ -21,7 +21,7 @@ const Checkout: React.FC<CheckoutProps> = ({ user, total, deliveryCharge, setAct
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const BACKEND_URL = 'http://localhost:3000';
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     const RAZORPAY_KEY_ID = 'rzp_live_RLqVBqxrDj5NsB';
 
     const loadRazorpayScript = () => {
