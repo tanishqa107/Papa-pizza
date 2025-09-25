@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Icon from './Icon';
 import type { User, View } from '../../types';
 import { INGREDIENT_AVATARS } from '../constants';
 import AvatarSelectionModal from './AvatarSelectionModal';
 import PizzaButton from './PizzaButton';
-import { supabase } from '../../supabaseClient';
 
 interface ProfileProps {
   user: User;
@@ -17,15 +16,9 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, setActiveView }) => {
   const [editedAddress, setEditedAddress] = useState(user.address);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showContactInfo, setShowContactInfo] = useState(false);
-  
-  useEffect(() => {
-    setEditedAddress(user.address);
-  }, [user.address]);
 
   const handleSave = () => {
-    // In a real app, you would also update the user's profile in your Supabase database.
-    // e.g., await supabase.from('profiles').update({ address: editedAddress }).eq('id', user.id);
-    setUser(prevUser => prevUser ? ({ ...prevUser, address: editedAddress }) : null);
+    // Address editing is now just for UI purposes since we're using a default user
     setIsEditing(false);
   };
 
@@ -35,19 +28,8 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, setActiveView }) => {
   };
 
   const handleAvatarSelect = (newAvatarId: string) => {
-    // In a real app, you would also update the user's profile in your Supabase database.
-    // e.g., await supabase.from('profiles').update({ avatar: newAvatarId }).eq('id', user.id);
-    setUser(prevUser => prevUser ? ({ ...prevUser, avatar: newAvatarId }) : null);
+    // Avatar selection is now just for UI purposes since we're using a default user
     setIsModalOpen(false);
-  };
-
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Error logging out:', error.message);
-      // Optionally show an error message to the user
-    }
-    // The onAuthStateChange listener in App.tsx will handle the rest.
   };
 
   const AvatarComponent = INGREDIENT_AVATARS.find(avatar => avatar.id === user.avatar)?.component || null;
@@ -113,12 +95,7 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, setActiveView }) => {
                </PizzaButton>
             )}
 
-            <PizzaButton 
-              variant="ghost"
-              onClick={() => setActiveView('orderHistory')}
-              className="w-full">
-              Order History
-            </PizzaButton>
+            
 
             <PizzaButton
               variant="ghost"
@@ -148,15 +125,7 @@ const Profile: React.FC<ProfileProps> = ({ user, setUser, setActiveView }) => {
                 </div>
               </div>
             )}
-             <div className="pt-4 mt-4 border-t">
-              <PizzaButton
-                variant="ghost"
-                onClick={handleLogout}
-                className="w-full !text-stone-600 !border-stone-400 hover:!bg-stone-100 hover:!text-stone-800"
-              >
-                Logout
-              </PizzaButton>
-            </div>
+
           </div>
         </div>
       </section>

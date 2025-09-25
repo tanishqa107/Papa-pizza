@@ -579,38 +579,30 @@ export const SPECIAL_offers: Offer[] = [
   {
     id: 1,
     title: 'Pocket Pizza Free!',
-    description: 'Get 1 pocket pizza free with the purchase of any medium pizza. A perfect little treat!',
-    imageUrl: 'https://picsum.photos/seed/pocketpizza/500/300',
+    description: 'Get 1 pocket pizza free with the purchase of any 2 large pizza. A perfect little treat!',
+    imageUrl: image49,
     action: 'claim',
   },
   {
     id: 2,
-    title: 'Wednesday Wow!',
-    description: 'Get 1 small pizza absolutely free every Wednesday on orders above ₹499. Mid-week happiness!',
-    imageUrl: 'https://picsum.photos/seed/wednesday/500/300',
+    title: 'Seal your Spot!',
+    description: 'first 20 orders get 20% off on orders above ₹399. Hurry, limited time offer!',
+    imageUrl: image37,
     action: 'claim',
   },
   {
     id: 3,
-    title: 'Dinner Combo Deal',
-    description: 'Enjoy 1 medium pizza, 1 pocket pizza, and a refreshing coke, all for just ₹399.',
-    imageUrl: 'https://picsum.photos/seed/dinnercombo/500/300',
+    title: 'Lets Celebrate Weekend!',
+    description: 'Enjoy 1 surprise Drink on order above ₹299 on Sundays. Cheers to good times!',
+    imageUrl: image31,
     action: 'claim',
   },
   {
     id: 4,
     title: 'Free Weekday Delivery',
-    description: 'Why step out? Get your favorite pizza delivered for free on weekdays for any order above ₹299.',
-    imageUrl: 'https://picsum.photos/seed/freedelivery/500/300',
+    description: 'Why step out? Get your favorite pizza delivered for free on Monday and Tuesday for any order above ₹299.',
+    imageUrl: image41,
     action: 'claim',
-  },
-  {
-    id: 5,
-    title: 'Earn Loyalty Points',
-    description: 'Get points on every order you place and redeem them for exciting rewards and free pizzas!',
-    imageUrl: 'https://picsum.photos/seed/loyaltypoints/500/300',
-    action: 'navigate',
-    targetView: 'points',
   }
 ];
 
@@ -668,6 +660,8 @@ interface NavItem {
   label: string;
   icon: React.ReactNode;
 }
+
+export const DELIVERY_CHARGE = 10;
 
 export const NAV_ITEMS: NavItem[] = [
   {

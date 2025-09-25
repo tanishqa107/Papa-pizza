@@ -1,0 +1,5 @@
+- [ ] Update backend/package.json to add nodemailer and @types/nodemailer dependencies
+- [ ] Update backend/.env to add GMAIL_USER and GMAIL_PASS
+- [ ] Update backend/src/index.ts to add email sending logic in /verify-payment
+- [ ] Install dependencies in backend
+- [ ] Test the notification by placing an order

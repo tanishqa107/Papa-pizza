@@ -12,12 +12,12 @@ interface CartProps {
   appliedOffer: Offer | null;
   removeOffer: () => void;
   subtotal: number;
-  discount: number;
   tax: number;
   total: number;
+  deliveryCharge: number;
 }
 
-const Cart: React.FC<CartProps> = ({ cartItems, updateQuantity, setActiveView, appliedOffer, removeOffer, subtotal, discount, tax, total }) => {
+const Cart: React.FC<CartProps> = ({ cartItems, updateQuantity, setActiveView, appliedOffer, removeOffer, subtotal, tax, total, deliveryCharge }) => {
 
   // Helper function to convert size to display format
   const getSizeDisplay = (item: CartItem) => {
@@ -28,10 +28,10 @@ const Cart: React.FC<CartProps> = ({ cartItems, updateQuantity, setActiveView, a
 
     if (isPizzaMania) {
   // Pizza Mania pizzas always show 7"
-  return 'treat';
+  return 'papa recommends ';
 } else if (isSuperSavingCombo) {
   // Super Saving Combos pizzas show no size in cart
-  return 'treat';
+  return 'papa recommends ';
 } else {
   // Famous Menu pizzas show their actual size
   switch (item.size) {
@@ -136,7 +136,7 @@ const Cart: React.FC<CartProps> = ({ cartItems, updateQuantity, setActiveView, a
             <div className="p-3 mb-4 bg-green-100 border border-green-300 text-green-800 rounded-lg flex justify-between items-center">
               <div>
                   <p className="font-bold">Offer Applied: {appliedOffer.title}</p>
-                  <p className="text-sm">A discount has been added to your order.</p>
+                  <p className="text-sm">Offer is active for your order.</p>
               </div>
               <button
                   onClick={removeOffer}
@@ -152,15 +152,13 @@ const Cart: React.FC<CartProps> = ({ cartItems, updateQuantity, setActiveView, a
               <span>Subtotal</span>
               <span>₹{subtotal.toFixed(2)}</span>
             </div>
-             {discount > 0 && (
-              <div className="flex justify-between text-green-600 font-medium">
-                <span>Offer Discount</span>
-                <span>-₹{discount.toFixed(2)}</span>
-              </div>
-            )}
             <div className="flex justify-between text-gray-600">
               <span>Taxes (8%)</span>
               <span>₹{tax.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-gray-600">
+              <span>Delivery Charge</span>
+              <span>₹{deliveryCharge.toFixed(2)}</span>
             </div>
             <div className="flex justify-between font-bold text-xl text-stone-800">
               <span>Total</span>

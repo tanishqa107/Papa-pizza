@@ -1,24 +1,144 @@
 import React, { useState } from 'react';
-import type { User, View } from '../../types';
+import type { User, View, CartItem, Offer } from '../../types';
 import PizzaButton from './PizzaButton';
 import Icon from './Icon';
 
 interface CheckoutProps {
     user: User;
     total: number;
+    deliveryCharge: number;
     setActiveView: (view: View) => void;
     onOrderSuccess: () => void;
+    cartItems: CartItem[];
+    tax: number;
+    appliedOffer: Offer | null;
 }
 
-const Checkout: React.FC<CheckoutProps> = ({ user, total, setActiveView, onOrderSuccess }) => {
+const Checkout: React.FC<CheckoutProps> = ({ user, total, deliveryCharge, setActiveView, onOrderSuccess, cartItems, tax, appliedOffer }) => {
     const [name, setName] = useState(user.name);
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState(user.address);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const BACKEND_URL = 'http://localhost:3000';
+    const RAZORPAY_KEY_ID = 'rzp_live_RLqVBqxrDj5NsB';
+
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            if ((window as any).Razorpay) {
+                resolve(true);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handlePaymentSuccess = async (response: any) => {
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
+
+        try {
+            const verifyResponse = await fetch(`${BACKEND_URL}/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    order_id: razorpay_order_id,
+                    payment_id: razorpay_payment_id,
+                    signature: razorpay_signature,
+                    user_id: user.id,
+                    items: JSON.stringify(cartItems),
+                    total,
+                    name,
+                    phone,
+                    address,
+                }),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+                onOrderSuccess();
+            } else {
+                setError('Payment verification failed. Please contact support.');
+            }
+        } catch (err) {
+            setError('Error verifying payment. Please try again.');
+        }
+    };
+
+    const handlePaymentFailure = () => {
+        setError('Payment failed. Please try again.');
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically handle payment processing
-        onOrderSuccess();
+        if (!name || !phone || !address || cartItems.length === 0) {
+            setError('Please fill all details and add items to cart.');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            // Create order on backend
+            const orderResponse = await fetch(`${BACKEND_URL}/create-order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    items: JSON.stringify(cartItems),
+                    total,
+                    name,
+                    phone,
+                    address,
+                }),
+            });
+
+            const orderData = await orderResponse.json();
+
+            if (!orderResponse.ok) {
+                throw new Error(orderData.error || 'Failed to create order');
+            }
+
+            // Load Razorpay script
+            const loaded = await loadRazorpayScript();
+            if (!loaded) {
+                throw new Error('Failed to load Razorpay SDK');
+            }
+
+            // Open Razorpay checkout
+            const options = {
+                key: RAZORPAY_KEY_ID,
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: 'Papa Pizza',
+                description: 'Order Payment',
+                order_id: orderData.order_id,
+                handler: handlePaymentSuccess,
+                prefill: {
+                    name,
+                    contact: phone,
+                },
+                theme: {
+                    color: '#ff0000',
+                },
+                modal: {
+                    ondismiss: handlePaymentFailure,
+                },
+            };
+
+            const razorpay = new (window as any).Razorpay(options);
+            razorpay.open();
+        } catch (err: any) {
+            setError(err.message || 'Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
     
     return (
@@ -89,18 +209,24 @@ const Checkout: React.FC<CheckoutProps> = ({ user, total, setActiveView, onOrder
                         </div>
                         <div className="flex justify-between text-gray-600">
                             <span>Delivery Fee</span>
-                            <span className="text-green-600 font-medium">FREE</span>
+                            <span className="text-green-600 font-medium">{deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge.toFixed(2)}`}</span>
                         </div>
                     </div>
                     <div className="flex justify-between font-bold text-xl text-stone-800 mt-4">
                         <span>Total to Pay</span>
                         <span>₹{total.toFixed(2)}</span>
                     </div>
+                    {error && (
+                        <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-lg">
+                            {error}
+                        </div>
+                    )}
                     <PizzaButton
                         onClick={handleSubmit}
                         className="w-full mt-6 py-3"
+                        disabled={loading}
                     >
-                        Pay ₹{total.toFixed(2)}
+                        {loading ? 'Processing...' : `Pay ₹${total.toFixed(2)}`}
                     </PizzaButton>
                     <p className="text-xs text-gray-500 mt-4 text-center">
                         By clicking "Pay", you agree to Papa's terms of service.
