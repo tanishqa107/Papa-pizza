@@ -12,7 +12,8 @@ dotenv.config();
 
 const allowedOrigins = [
   "https://papa-pizza-dun.vercel.app",
-  "http://localhost:5173"
+  "http://localhost:5173",
+  "https://www.thepapapizza.com"
 ];
 
 const app = express();
