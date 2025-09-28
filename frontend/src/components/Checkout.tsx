@@ -51,7 +51,7 @@ const handlePayment = async () => {
     console.log("Pizzas at checkout:", pizzas);
 
     // 1. Create order from backend
-    const { data } = await axios.post("http://localhost:3000/api/orders", {
+    const { data } = await axios.post("https://papa-pizza-1afi.onrender.com/api/orders", {
       amount: finalAmount,
     });
 
@@ -64,7 +64,7 @@ const handlePayment = async () => {
       description: "Order Payment",
       order_id: data.id,
       handler: async (response: any) => {
-        const verifyRes = await axios.post("http://localhost:3000/api/verify", response);
+        const verifyRes = await axios.post("https://papa-pizza-1afi.onrender.com/api/verify", response);
         if (verifyRes.data.success) {
           // ✅ Log order details before sending mail
           console.log("Order details going to mail API:", {
@@ -75,7 +75,7 @@ const handlePayment = async () => {
             amount: finalAmount,
           });
 
-          await axios.post("http://localhost:3000/send-mail", {
+          await axios.post("https://papa-pizza-1afi.onrender.com/send-mail", {
             pizzas: pizzas.map((item) => ({
               name: item.pizza.name,
               quantity: item.quantity,
