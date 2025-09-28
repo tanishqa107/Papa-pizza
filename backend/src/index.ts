@@ -10,32 +10,20 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 
-const app = express();
 const allowedOrigins = [
   "https://papa-pizza-dun.vercel.app",
   "http://localhost:5173",
   "https://www.thepapapizza.com"
 ];
 
+const app = express();
+
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin like mobile apps or curl
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
+    origin: allowedOrigins,
+    
   })
-);
-
-// Handle preflight requests for all routes
-app.options("*", cors());
-
+)
 app.use(express.json());
 
 const supabaseUrl = process.env.SUPABASE_URL as string;
